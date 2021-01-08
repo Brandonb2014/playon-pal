@@ -10,8 +10,8 @@ namespace BachFlixAudioAnalyzer
 {
     public partial class Form1 : Form
     {
-        private string silenceDetection;
-        private string silenceDuration;
+        private Settings mySettings = new Settings();
+
         public Form1()
         {
             InitializeComponent();
@@ -95,11 +95,22 @@ namespace BachFlixAudioAnalyzer
             for (var i = 0; i < lvFilesToAnalyze.Items.Count; i++)
             {
                 var file = lvFilesToAnalyze.Items[i].Text.ToString();
+                var fileWithoutExtension = Path.GetFileNameWithoutExtension(file);
+                string textFile = Path.Combine(Application.StartupPath, "SilenceDetection", fileWithoutExtension + "-timestamp.txt");
                 lvFilesToAnalyze.Items[i].ForeColor = Color.Blue;
                 this.Refresh();
 
                 UpdateStatusLabel("Analyzing '" + file + "' for silence.");
-                DetectSilence(Path.Combine(txtPath.Text, file));
+
+                if (!File.Exists(textFile))
+                    DetectSilence(Path.Combine(txtPath.Text, file));
+
+
+                lbAnalyzed.Items.Add(Path.GetFileName(file));
+
+                CleanTextFile(fileWithoutExtension);
+
+                UpdateStatusLabel("Done.");
 
                 lvFilesToAnalyze.Items[i].ForeColor = Color.Green;
 
@@ -121,10 +132,13 @@ namespace BachFlixAudioAnalyzer
                 switch (entries[0])
                 {
                     case "silenceDetection":
-                        silenceDetection = entries[1];
+                        mySettings.silenceDetection = entries[1];
                         break;
                     case "silenceDuration":
-                        silenceDuration = entries[1];
+                        mySettings.silenceDuration = entries[1];
+                        break;
+                    case "vlcLocation":
+                        mySettings.vlcLocation = entries[1];
                         break;
                     default:
                         break;
@@ -143,7 +157,7 @@ namespace BachFlixAudioAnalyzer
         {
             var fileName = Path.GetFileName(file);
             var fileWithoutExtension = Path.GetFileNameWithoutExtension(file);
-            var command = "ffmpeg -y -nostats -i \"" + file + "\" -af silencedetect=n=" + silenceDetection + ":d=" + silenceDuration + " -f null - 2> SilenceDetection\\\"" + fileWithoutExtension + "\".txt";
+            var command = "ffmpeg -y -nostats -i \"" + file + "\" -af silencedetect=n=" + mySettings.silenceDetection + ":d=" + mySettings.silenceDuration + " -f null - 2> SilenceDetection\\\"" + fileWithoutExtension + "\".txt";
             try
             {
                 // create the ProcessStartInfo using "cmd" as the program to be run,
@@ -168,12 +182,6 @@ namespace BachFlixAudioAnalyzer
                 proc.Start();
                 // Get the output into a string
                 string result = proc.StandardOutput.ReadToEnd();
-
-                lbAnalyzed.Items.Add(Path.GetFileName(file));
-
-                CleanTextFile(fileWithoutExtension);
-
-                UpdateStatusLabel("Done.");
             }
             catch (Exception exc)
             {
@@ -405,9 +413,24 @@ namespace BachFlixAudioAnalyzer
             string silenceStart = ConvertTimeToSeconds(entries[0].Trim());
             string silenceEnd = ConvertTimeToSeconds(entries[1].Trim());
             string fn = Path.Combine(txtPath.Text, lblSelectedTimestamp.Text);
+            string vlcPath = "";
 
-            var playVideo = "start \"C:\\Program Files\\VideoLAN\\VLC\\vlc.exe\" vlc \"" + fn + "\" --start-time " + silenceStart + " --stop-time " + silenceEnd;
-            RunCommand(playVideo);
+            if (Directory.Exists("C:\\Program Files\\VideoLAN\\VLC"))
+                vlcPath = @"C:\Program Files\VideoLAN\VLC";
+            else if (Directory.Exists("C:\\Program Files (x86)\\VideoLAN\\VLC"))
+                vlcPath = @"C:\Program Files (x86)\VideoLAN\VLC";
+            else
+                vlcPath = mySettings.vlcLocation;
+
+            if (vlcPath != "")
+            {
+                var playVideo = "start " + vlcPath + "\\vlc.exe\" vlc \"" + fn + "\" --start-time " + silenceStart + " --stop-time " + silenceEnd;
+                RunCommand(playVideo);
+            } else
+            {
+                lblError.Text = "Path to Video Lan was not found. Please go to Settings and fill in the path to the folder that holds the vlc.exe file.";
+                lblError.Visible = true;
+            }
         }
 
         private void btnClearWaitingFiles_Click(object sender, EventArgs e)

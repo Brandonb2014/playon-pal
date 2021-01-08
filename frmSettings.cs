@@ -31,6 +31,9 @@ namespace BachFlixAudioAnalyzer
                     case "silenceDuration":
                         txtSilenceDuration.Text = entries[1];
                         break;
+                    case "vlcLocation":
+                        txtVlcLocation.Text = entries[1];
+                        break;
                     default:
                         break;
                 }

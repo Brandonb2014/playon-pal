@@ -100,18 +100,18 @@
             this.txtPath.Margin = new System.Windows.Forms.Padding(4);
             this.txtPath.Name = "txtPath";
             this.txtPath.ReadOnly = true;
-            this.txtPath.Size = new System.Drawing.Size(620, 28);
+            this.txtPath.Size = new System.Drawing.Size(620, 26);
             this.txtPath.TabIndex = 2;
             this.toolTip1.SetToolTip(this.txtPath, "The path to the chosen folder.");
             // 
             // lblPath
             // 
             this.lblPath.AutoSize = true;
-            this.lblPath.Font = new System.Drawing.Font("Tempus Sans ITC", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblPath.Location = new System.Drawing.Point(13, 19);
             this.lblPath.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblPath.Name = "lblPath";
-            this.lblPath.Size = new System.Drawing.Size(55, 26);
+            this.lblPath.Size = new System.Drawing.Size(58, 25);
             this.lblPath.TabIndex = 3;
             this.lblPath.Text = "Path:";
             // 
@@ -147,7 +147,7 @@
             // 
             this.lvFilesToAnalyze.AllowDrop = true;
             this.lvFilesToAnalyze.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lvFilesToAnalyze.Font = new System.Drawing.Font("Tempus Sans ITC", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lvFilesToAnalyze.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lvFilesToAnalyze.HideSelection = false;
             this.lvFilesToAnalyze.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1});
@@ -273,7 +273,7 @@
             this.lblLoadedFiles.Location = new System.Drawing.Point(407, 411);
             this.lblLoadedFiles.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblLoadedFiles.Name = "lblLoadedFiles";
-            this.lblLoadedFiles.Size = new System.Drawing.Size(100, 20);
+            this.lblLoadedFiles.Size = new System.Drawing.Size(111, 20);
             this.lblLoadedFiles.TabIndex = 12;
             this.lblLoadedFiles.Text = "lblLoadedFiles";
             this.lblLoadedFiles.Visible = false;
@@ -281,11 +281,11 @@
             // lblCurrentRunningProcess
             // 
             this.lblCurrentRunningProcess.AutoSize = true;
-            this.lblCurrentRunningProcess.Font = new System.Drawing.Font("Tempus Sans ITC", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.lblCurrentRunningProcess.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.lblCurrentRunningProcess.Location = new System.Drawing.Point(13, 450);
             this.lblCurrentRunningProcess.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblCurrentRunningProcess.Name = "lblCurrentRunningProcess";
-            this.lblCurrentRunningProcess.Size = new System.Drawing.Size(253, 26);
+            this.lblCurrentRunningProcess.Size = new System.Drawing.Size(263, 25);
             this.lblCurrentRunningProcess.TabIndex = 14;
             this.lblCurrentRunningProcess.Text = "lblCurrentRunningProcess";
             this.lblCurrentRunningProcess.Visible = false;
@@ -329,7 +329,7 @@
             // btnCreateTimestamp
             // 
             this.btnCreateTimestamp.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnCreateTimestamp.Font = new System.Drawing.Font("Tempus Sans ITC", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btnCreateTimestamp.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnCreateTimestamp.Location = new System.Drawing.Point(463, 62);
             this.btnCreateTimestamp.Margin = new System.Windows.Forms.Padding(0);
             this.btnCreateTimestamp.Name = "btnCreateTimestamp";
@@ -343,10 +343,10 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Tempus Sans ITC", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label4.Location = new System.Drawing.Point(8, 59);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(148, 20);
+            this.label4.Size = new System.Drawing.Size(151, 20);
             this.label4.TabIndex = 23;
             this.label4.Text = "Duration of video:";
             // 
@@ -355,7 +355,7 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(19, 83);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(261, 20);
+            this.label3.Size = new System.Drawing.Size(285, 20);
             this.label3.TabIndex = 22;
             this.label3.Text = "Silence Start - Silence End => Duration";
             // 
@@ -365,7 +365,7 @@
             this.lblFileDuration.Location = new System.Drawing.Point(158, 59);
             this.lblFileDuration.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblFileDuration.Name = "lblFileDuration";
-            this.lblFileDuration.Size = new System.Drawing.Size(108, 20);
+            this.lblFileDuration.Size = new System.Drawing.Size(110, 20);
             this.lblFileDuration.TabIndex = 21;
             this.lblFileDuration.Text = "lblFileDuration";
             this.lblFileDuration.Visible = false;
@@ -376,7 +376,7 @@
             this.lblSaveTimestampsStatus.Location = new System.Drawing.Point(271, 328);
             this.lblSaveTimestampsStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSaveTimestampsStatus.Name = "lblSaveTimestampsStatus";
-            this.lblSaveTimestampsStatus.Size = new System.Drawing.Size(172, 20);
+            this.lblSaveTimestampsStatus.Size = new System.Drawing.Size(193, 20);
             this.lblSaveTimestampsStatus.TabIndex = 20;
             this.lblSaveTimestampsStatus.Text = "lblSaveTimestampsStatus";
             this.lblSaveTimestampsStatus.Visible = false;
@@ -400,7 +400,7 @@
             this.lblSelectedTimestamp.Location = new System.Drawing.Point(8, 29);
             this.lblSelectedTimestamp.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSelectedTimestamp.Name = "lblSelectedTimestamp";
-            this.lblSelectedTimestamp.Size = new System.Drawing.Size(152, 20);
+            this.lblSelectedTimestamp.Size = new System.Drawing.Size(165, 20);
             this.lblSelectedTimestamp.TabIndex = 19;
             this.lblSelectedTimestamp.Text = "lblSelectedTimestamp";
             this.lblSelectedTimestamp.Visible = false;
@@ -463,10 +463,10 @@
             // 
             this.lblError.AutoSize = true;
             this.lblError.ForeColor = System.Drawing.Color.Red;
-            this.lblError.Location = new System.Drawing.Point(6, 948);
+            this.lblError.Location = new System.Drawing.Point(14, 852);
             this.lblError.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblError.Name = "lblError";
-            this.lblError.Size = new System.Drawing.Size(93, 20);
+            this.lblError.Size = new System.Drawing.Size(107, 20);
             this.lblError.TabIndex = 11;
             this.lblError.Text = "errorMessage";
             this.lblError.Visible = false;
@@ -474,10 +474,10 @@
             // lblFinishedProcessing
             // 
             this.lblFinishedProcessing.AutoSize = true;
-            this.lblFinishedProcessing.Location = new System.Drawing.Point(13, 948);
+            this.lblFinishedProcessing.Location = new System.Drawing.Point(21, 852);
             this.lblFinishedProcessing.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblFinishedProcessing.Name = "lblFinishedProcessing";
-            this.lblFinishedProcessing.Size = new System.Drawing.Size(147, 20);
+            this.lblFinishedProcessing.Size = new System.Drawing.Size(162, 20);
             this.lblFinishedProcessing.TabIndex = 21;
             this.lblFinishedProcessing.Text = "lblFinishedProcessing";
             this.lblFinishedProcessing.Visible = false;
@@ -514,7 +514,7 @@
             this.lblErrorCustomTimestamp.ForeColor = System.Drawing.Color.Red;
             this.lblErrorCustomTimestamp.Location = new System.Drawing.Point(8, 72);
             this.lblErrorCustomTimestamp.Name = "lblErrorCustomTimestamp";
-            this.lblErrorCustomTimestamp.Size = new System.Drawing.Size(167, 20);
+            this.lblErrorCustomTimestamp.Size = new System.Drawing.Size(174, 20);
             this.lblErrorCustomTimestamp.TabIndex = 4;
             this.lblErrorCustomTimestamp.Text = "You must input a value.";
             this.lblErrorCustomTimestamp.Visible = false;
@@ -544,10 +544,10 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Tempus Sans ITC", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label5.Location = new System.Drawing.Point(6, 30);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(107, 20);
+            this.label5.Size = new System.Drawing.Size(118, 20);
             this.label5.TabIndex = 1;
             this.label5.Text = "Silence Start:";
             // 
@@ -555,7 +555,7 @@
             // 
             this.txtCustomTimestamp.Location = new System.Drawing.Point(119, 27);
             this.txtCustomTimestamp.Name = "txtCustomTimestamp";
-            this.txtCustomTimestamp.Size = new System.Drawing.Size(100, 28);
+            this.txtCustomTimestamp.Size = new System.Drawing.Size(100, 26);
             this.txtCustomTimestamp.TabIndex = 0;
             // 
             // Form1
@@ -565,7 +565,7 @@
             this.AutoScroll = true;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(1250, 1029);
+            this.ClientSize = new System.Drawing.Size(1250, 749);
             this.Controls.Add(this.gbCreateTimestamp);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.lblFinishedProcessing);
@@ -582,7 +582,7 @@
             this.Controls.Add(this.lblPath);
             this.Controls.Add(this.txtPath);
             this.Controls.Add(this.btnOpen);
-            this.Font = new System.Drawing.Font("Tempus Sans ITC", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "BachFlix Audio File Analyzer";

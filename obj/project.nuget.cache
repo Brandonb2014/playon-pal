@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "CD5QBXdw8yh/8++geXGPbMSg+WxBNn/+jYAhTxwMLKRrShalqYWwaEZDqUy1bxKNLE+K5SGyDS1ejCxj2nYLGA==",
+  "dgSpecHash": "gcl2vOp6jjwdOIRtV/CqP+LcLxk4bDu29mM1BreifG22hu4Hbj92m1dng8vWQkrbSk7SQy9v4FxdkPh0uVx1cQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Brandon\\Documents\\BachFlixAudioAnalyzer\\BachFlixAudioAnalyzer.csproj",
+  "projectFilePath": "C:\\Users\\Brandon\\Documents\\Projects\\PlayonPal\\BachFlixAudioAnalyzer.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Brandon\\.nuget\\packages\\ffmpegcore\\2.2.6\\ffmpegcore.2.2.6.nupkg.sha512",
     "C:\\Users\\Brandon\\.nuget\\packages\\instances\\1.6.0\\instances.1.6.0.nupkg.sha512",
