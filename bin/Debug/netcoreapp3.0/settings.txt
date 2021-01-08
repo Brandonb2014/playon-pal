@@ -1,0 +1,2 @@
+silenceDetection,0.1
+silenceDuration,5
