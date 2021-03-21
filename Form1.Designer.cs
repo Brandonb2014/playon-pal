@@ -248,7 +248,7 @@
             this.lvFilesToAnalyze.BackColor = System.Drawing.Color.Black;
             this.lvFilesToAnalyze.Cursor = System.Windows.Forms.Cursors.Hand;
             this.lvFilesToAnalyze.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lvFilesToAnalyze.ForeColor = System.Drawing.SystemColors.Control;
+            this.lvFilesToAnalyze.ForeColor = System.Drawing.Color.White;
             this.lvFilesToAnalyze.HideSelection = false;
             this.lvFilesToAnalyze.Items.AddRange(new System.Windows.Forms.ListViewItem[] {
             listViewItem1});
@@ -617,7 +617,7 @@
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.Name = "Form1";
             this.ShowIcon = false;
-            this.Text = "BachFlix Audio File Analyzer";
+            this.Text = "PlayOnPal";
             this.gbFilesToProcess.ResumeLayout(false);
             this.gbFilesToProcess.PerformLayout();
             this.gbDetectedSilence.ResumeLayout(false);

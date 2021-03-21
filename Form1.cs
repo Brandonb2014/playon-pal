@@ -1,4 +1,27 @@
-﻿using System;
+﻿////////////////////////////////////////////////////////////////////////////////////
+/// PlayonPal Uses the FFmpeg library to detect silence found in video recordings if you use the PlayOn TV Desktop version.
+/// Then removes the silence from the beginning and end of the file.
+
+/// Copyright (C) 2021 Brandon Birschbach (BrandonTech) brandon.birschbach@gmail.com
+
+/// This library is free software; you can redistribute it and/or
+/// modify it under the terms of the GNU Lesser General Public
+/// License as published by the Free Software Foundation; either
+/// version 2.1 of the License, or (at your option) any later version.
+
+/// This library is distributed in the hope that it will be useful,
+/// but WITHOUT ANY WARRANTY; without even the implied warranty of
+/// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+/// Lesser General Public License for more details.
+
+/// You should have received a copy of the GNU Lesser General Public
+/// License along with this library; if not, write to the Free Software
+/// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+////////////////////////////////////////////////////////////////////////////////////
+
+
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -125,7 +148,7 @@ namespace BachFlixAudioAnalyzer
             // First, step through each item and ensure the colors are black.
             for (var i = 0; i < lvFilesToAnalyze.Items.Count; i++)
             {
-                lvFilesToAnalyze.Items[i].ForeColor = Color.Gray;
+                lvFilesToAnalyze.Items[i].ForeColor = Color.White;
             }
 
             // Then, if the files are to be re-analyzed remove any existing timestamp txt files.
@@ -663,7 +686,7 @@ namespace BachFlixAudioAnalyzer
             // First, step through each item and ensure the colors are black.
             for (var i = 0; i < lvFilesToAnalyze.Items.Count; i++)
             {
-                lvFilesToAnalyze.Items[i].ForeColor = Color.Gray;
+                lvFilesToAnalyze.Items[i].ForeColor = Color.White;
             }
 
             // Create the directory that will hold the cut video files while processing.
