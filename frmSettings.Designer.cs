@@ -37,15 +37,21 @@
             this.txtSilenceDuration = new System.Windows.Forms.TextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.txtVlcLocation = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txtOutputFolder = new System.Windows.Forms.TextBox();
+            this.chkbxDeleteOriginal = new System.Windows.Forms.CheckBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.chkbxRemoveSplashScreens = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(10, 20);
+            this.label1.Location = new System.Drawing.Point(13, 18);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(229, 20);
@@ -56,7 +62,7 @@
             // 
             // txtSilenceDetectNoiseLevel
             // 
-            this.txtSilenceDetectNoiseLevel.Location = new System.Drawing.Point(247, 17);
+            this.txtSilenceDetectNoiseLevel.Location = new System.Drawing.Point(250, 15);
             this.txtSilenceDetectNoiseLevel.Margin = new System.Windows.Forms.Padding(4);
             this.txtSilenceDetectNoiseLevel.Name = "txtSilenceDetectNoiseLevel";
             this.txtSilenceDetectNoiseLevel.Size = new System.Drawing.Size(88, 26);
@@ -69,7 +75,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label2.Location = new System.Drawing.Point(10, 78);
+            this.label2.Location = new System.Drawing.Point(13, 50);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(147, 20);
@@ -80,7 +86,7 @@
             // btnSave
             // 
             this.btnSave.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.btnSave.Location = new System.Drawing.Point(13, 195);
+            this.btnSave.Location = new System.Drawing.Point(10, 334);
             this.btnSave.Margin = new System.Windows.Forms.Padding(4);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(96, 30);
@@ -92,7 +98,7 @@
             // lblSaveStatus
             // 
             this.lblSaveStatus.AutoSize = true;
-            this.lblSaveStatus.Location = new System.Drawing.Point(117, 200);
+            this.lblSaveStatus.Location = new System.Drawing.Point(117, 339);
             this.lblSaveStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblSaveStatus.Name = "lblSaveStatus";
             this.lblSaveStatus.Size = new System.Drawing.Size(107, 20);
@@ -102,7 +108,7 @@
             // 
             // txtSilenceDuration
             // 
-            this.txtSilenceDuration.Location = new System.Drawing.Point(157, 75);
+            this.txtSilenceDuration.Location = new System.Drawing.Point(160, 47);
             this.txtSilenceDuration.Margin = new System.Windows.Forms.Padding(4);
             this.txtSilenceDuration.Name = "txtSilenceDuration";
             this.txtSilenceDuration.Size = new System.Drawing.Size(30, 26);
@@ -114,7 +120,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label4.Location = new System.Drawing.Point(13, 129);
+            this.label4.Location = new System.Drawing.Point(13, 84);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(122, 20);
             this.label4.TabIndex = 8;
@@ -122,28 +128,103 @@
             this.toolTip1.SetToolTip(this.label4, "We use VLC to play the timestamps. Please input the folder location that holds yo" +
         "ur vlc.exe file.");
             // 
+            // txtVlcLocation
+            // 
+            this.txtVlcLocation.Location = new System.Drawing.Point(144, 81);
+            this.txtVlcLocation.Name = "txtVlcLocation";
+            this.txtVlcLocation.Size = new System.Drawing.Size(194, 26);
+            this.txtVlcLocation.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.txtVlcLocation, "We use VLC to play the timestamps. Please input the folder location that holds yo" +
+        "ur vlc.exe file.");
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label5.Location = new System.Drawing.Point(13, 125);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(125, 20);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Output Folder:";
+            this.toolTip1.SetToolTip(this.label5, "Please insert the full path to the folder you would like your finished videos out" +
+        "put to.");
+            // 
+            // txtOutputFolder
+            // 
+            this.txtOutputFolder.Location = new System.Drawing.Point(144, 122);
+            this.txtOutputFolder.Name = "txtOutputFolder";
+            this.txtOutputFolder.Size = new System.Drawing.Size(194, 26);
+            this.txtOutputFolder.TabIndex = 11;
+            this.toolTip1.SetToolTip(this.txtOutputFolder, "Please insert the full path to the folder you would like your finished videos out" +
+        "put to.");
+            // 
+            // chkbxDeleteOriginal
+            // 
+            this.chkbxDeleteOriginal.AutoSize = true;
+            this.chkbxDeleteOriginal.Location = new System.Drawing.Point(270, 167);
+            this.chkbxDeleteOriginal.Name = "chkbxDeleteOriginal";
+            this.chkbxDeleteOriginal.Size = new System.Drawing.Size(15, 14);
+            this.chkbxDeleteOriginal.TabIndex = 12;
+            this.toolTip1.SetToolTip(this.chkbxDeleteOriginal, "Delete the original file when done removing silence.");
+            this.chkbxDeleteOriginal.UseVisualStyleBackColor = true;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label6.Location = new System.Drawing.Point(13, 163);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(251, 20);
+            this.label6.TabIndex = 13;
+            this.label6.Text = "Delete original file when done:";
+            this.toolTip1.SetToolTip(this.label6, "Delete the original file when done removing silence.");
+            // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(195, 83);
+            this.label3.Location = new System.Drawing.Point(198, 55);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(69, 20);
             this.label3.TabIndex = 7;
             this.label3.Text = "seconds";
             // 
-            // txtVlcLocation
+            // label7
             // 
-            this.txtVlcLocation.Location = new System.Drawing.Point(139, 126);
-            this.txtVlcLocation.Name = "txtVlcLocation";
-            this.txtVlcLocation.Size = new System.Drawing.Size(196, 26);
-            this.txtVlcLocation.TabIndex = 9;
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label7.Location = new System.Drawing.Point(14, 203);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(271, 20);
+            this.label7.TabIndex = 15;
+            this.label7.Text = "Remove PlayOn Splash Screens:";
+            this.toolTip1.SetToolTip(this.label7, "If the file is from a PlayOn recording, check this box to remove the splash scree" +
+        "ns. Leave it unchecked to slice the splash screens back in after removing silenc" +
+        "e.");
+            // 
+            // chkbxRemoveSplashScreens
+            // 
+            this.chkbxRemoveSplashScreens.AutoSize = true;
+            this.chkbxRemoveSplashScreens.Location = new System.Drawing.Point(291, 209);
+            this.chkbxRemoveSplashScreens.Name = "chkbxRemoveSplashScreens";
+            this.chkbxRemoveSplashScreens.Size = new System.Drawing.Size(15, 14);
+            this.chkbxRemoveSplashScreens.TabIndex = 14;
+            this.toolTip1.SetToolTip(this.chkbxRemoveSplashScreens, "If the file is from a PlayOn recording, check this box to remove the splash scree" +
+        "ns. Leave it unchecked to slice the splash screens back in after removing silenc" +
+        "e.");
+            this.chkbxRemoveSplashScreens.UseVisualStyleBackColor = true;
             // 
             // frmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(347, 238);
+            this.ClientSize = new System.Drawing.Size(356, 377);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.chkbxRemoveSplashScreens);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.chkbxDeleteOriginal);
+            this.Controls.Add(this.txtOutputFolder);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.txtVlcLocation);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -156,6 +237,7 @@
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.Name = "frmSettings";
             this.Text = "frmSettings";
+            this.TopMost = true;
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -173,5 +255,11 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txtVlcLocation;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox txtOutputFolder;
+        private System.Windows.Forms.CheckBox chkbxDeleteOriginal;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.CheckBox chkbxRemoveSplashScreens;
     }
 }

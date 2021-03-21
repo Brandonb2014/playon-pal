@@ -1,2 +1,6 @@
-silenceDetection,0.01
-silenceDuration,5
+silenceDetection,0.0001
+silenceDuration,1
+vlcLocation,
+outputLocation,E:\Run these through HandBrake
+deleteOriginal,True
+removeSplashScreens,False

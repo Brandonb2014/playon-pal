@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace BachFlixAudioAnalyzer
@@ -11,6 +12,10 @@ namespace BachFlixAudioAnalyzer
     public partial class Form1 : Form
     {
         private Settings mySettings = new Settings();
+        private bool keepAnalyzing = true;
+        private bool keepProcessing = true;
+        private bool currentlyAnalyzing = false;
+        private bool currentlyProcessing = false;
 
         public Form1()
         {
@@ -25,8 +30,10 @@ namespace BachFlixAudioAnalyzer
         /// <param name="e"></param>
         private void btnOpen_Click(object sender, EventArgs e)
         {
-            // Clear all videos in the files to process listbox.
+            // Clear all videos in the files to analyze listView, and the analyzed listBox.
             lvFilesToAnalyze.Items.Clear();
+            gbCreateTimestamp.Visible = false;
+            gbDetectedSilence.Visible = false;
 
             // Open folder browser dialog.
             using (FolderBrowserDialog fbd = new FolderBrowserDialog() { Description = "Select your path." })
@@ -51,9 +58,9 @@ namespace BachFlixAudioAnalyzer
                     if (lvFilesToAnalyze.Items.Count > 0)
                     {
                         btnAnalyze.Enabled = true;
+                        btnReAnalyzeFiles.Enabled = true;
                         btnRemoveSelectedWaitingFiles.Enabled = true;
                         btnClearWaitingFiles.Enabled = true;
-                        lblLoadedFiles.Visible = true;
                         UpdateFilesToAnalyzeCount();
                     }
 
@@ -66,18 +73,22 @@ namespace BachFlixAudioAnalyzer
             int count = lvFilesToAnalyze.Items.Count;
             string plural = (count == 1) ? " File " : " Files ";
             string text = "";
+            string process = (btnProcessFiles.Enabled == true) ? " process." : " analyze.";
+
 
             if (count > 0)
             {
-                text += count + plural + "waiting for analysis. Now press 'Analyze' to detect silence.";
+                text += count + plural + "waiting to" + process;
             } else
             {
                 text += count + plural + "selected. Click 'Open' to add different files.";
                 btnAnalyze.Enabled = false;
+                btnReAnalyzeFiles.Enabled = false;
                 btnRemoveSelectedWaitingFiles.Enabled = false;
                 btnClearWaitingFiles.Enabled = false;
             }
-            lblLoadedFiles.Text = text;
+            lblCurrentRunningProcess.Visible = true;
+            lblCurrentRunningProcess.Text = text;
         }
 
         private void btnSettings_Click(object sender, EventArgs e)
@@ -88,38 +99,162 @@ namespace BachFlixAudioAnalyzer
 
         private void btnAnalyze_Click(object sender, EventArgs e)
         {
-            readSettingsFile();
-            lblLoadedFiles.Visible = false;
+            checkFileForSilence(false);
+        }
+        private void btnReAnalyzeFiles_Click(object sender, EventArgs e)
+        {
+            checkFileForSilence(true);
+        }
 
-            Directory.CreateDirectory(Application.StartupPath + "\\SilenceDetection");
+        private async void checkFileForSilence(bool reAnalyzeFile)
+        {
+            btnOpen.Enabled =
+            btnSettings.Enabled =
+            btnRemoveSelectedWaitingFiles.Enabled =
+            btnClearWaitingFiles.Enabled =
+            btnAnalyze.Enabled =
+            btnReAnalyzeFiles.Enabled =
+            btnProcessFiles.Enabled = false;
+
+            btnStopAnalyze.Visible =
+            currentlyAnalyzing = true;
+
+            readSettingsFile();
+            lblCurrentRunningProcess.Visible = false;
+
+            // First, step through each item and ensure the colors are black.
             for (var i = 0; i < lvFilesToAnalyze.Items.Count; i++)
             {
-                var file = lvFilesToAnalyze.Items[i].Text.ToString();
-                var fileWithoutExtension = Path.GetFileNameWithoutExtension(file);
-                string textFile = Path.Combine(Application.StartupPath, "SilenceDetection", fileWithoutExtension + "-timestamp.txt");
-                lvFilesToAnalyze.Items[i].ForeColor = Color.Blue;
-                this.Refresh();
-
-                UpdateStatusLabel("Analyzing '" + file + "' for silence.");
-
-                if (!File.Exists(textFile))
-                    DetectSilence(Path.Combine(txtPath.Text, file));
-
-
-                lbAnalyzed.Items.Add(Path.GetFileName(file));
-
-                CleanTextFile(fileWithoutExtension);
-
-                UpdateStatusLabel("Done.");
-
-                lvFilesToAnalyze.Items[i].ForeColor = Color.Green;
-
-                this.Refresh();
+                lvFilesToAnalyze.Items[i].ForeColor = Color.Gray;
             }
+
+            // Then, if the files are to be re-analyzed remove any existing timestamp txt files.
+            if (reAnalyzeFile)
+            {
+                for (var i = 0; i < lvFilesToAnalyze.Items.Count; i++)
+                {
+                    string selectedFile = lvFilesToAnalyze.Items[i].Text.Substring(0, lvFilesToAnalyze.Items[i].Text.Length - 4);
+                    string wd = Path.Combine(Application.StartupPath, "SilenceDetection");
+                    string fn = selectedFile + "-timestamp.txt";
+
+                    File.Delete(Path.Combine(wd, fn));
+                }
+            }
+
+            Directory.CreateDirectory(Application.StartupPath + "\\SilenceDetection");
+
+            for (var i = 0; i < lvFilesToAnalyze.Items.Count; i++)
+            {
+                if (keepAnalyzing)
+                {
+                    var file = lvFilesToAnalyze.Items[i].Text.ToString();
+                    var fullPathToFile = Path.Combine(txtPath.Text, file);
+                    var fileWithoutExtension = Path.GetFileNameWithoutExtension(file);
+                    string textFile = Path.Combine(Application.StartupPath, "SilenceDetection", fileWithoutExtension + "-timestamp.txt");
+                    lvFilesToAnalyze.Items[i].ForeColor = Color.Blue;
+
+                    UpdateStatusLabel("Analyzing '" + file + "' for silence.");
+
+                    if (!File.Exists(textFile) || reAnalyzeFile)
+                    {
+                        var command = "ffmpeg -y -nostats -i \"" + fullPathToFile + "\" -af silencedetect=n=" + mySettings.silenceDetection + ":d=" + mySettings.silenceDuration + " -f null - 2> SilenceDetection\\\"" + fileWithoutExtension + "\".txt";
+                        await Task.Run(() =>
+                        {
+                            RunCommand(command);
+                        });
+
+                        CleanTextFile(fileWithoutExtension);
+                    }
+
+                    setListViewItemColor(lvFilesToAnalyze.Items[i].Text.ToString());
+
+                    UpdateStatusLabel("Done.");
+
+
+                    this.Refresh();
+                }
+            }
+            btnOpen.Enabled =
+            btnSettings.Enabled =
+            btnRemoveSelectedWaitingFiles.Enabled =
+            btnClearWaitingFiles.Enabled =
+            btnAnalyze.Enabled =
+            btnReAnalyzeFiles.Enabled =
+            btnProcessFiles.Enabled =
+            keepAnalyzing =
+            btnStopAnalyze.Enabled = true;
+
+            btnStopAnalyze.Visible =
+            lblStopProcessing.Visible =
+            currentlyAnalyzing = false;
+
             UpdateFilesToAnalyzeCount();
             UpdateFilesAnalyzedCount();
         }
 
+        private void setListViewItemColor(string file)
+        {
+            var numOfTimestamps = countTimestamps(Path.GetFileNameWithoutExtension(file));
+
+            for (var i = 0; i < lvFilesToAnalyze.Items.Count; i++)
+            {
+                if (lvFilesToAnalyze.Items[i].Text.ToString() == file)
+                {
+                    if (numOfTimestamps == 2)
+                    {
+                        lvFilesToAnalyze.Items[i].ForeColor = Color.Green;
+                    }
+                    else
+                    {
+                        lvFilesToAnalyze.Items[i].ForeColor = Color.Yellow;
+                    }
+                }
+            }
+        }
+
+        private int countTimestamps(string file)
+        {
+            try
+            {
+                List<string> lines = File.ReadAllLines(Path.Combine(Application.StartupPath, "SilenceDetection", file + "-timestamp.txt")).ToList();
+
+                if (lines.Count >= 0)
+                {
+                    return lines.Count;
+                } else
+                {
+                    return -1;
+                }
+
+            }
+            catch (Exception exc)
+            {
+                lblError.Visible = true;
+                lblError.Text = exc.Message;
+                throw;
+            }
+        }
+
+        private void btnRefreshTimestamps_Click(object sender, EventArgs e)
+        {
+            var file = lblSelectedTimestamp.Text.ToString();
+            var fileWithoutExtension = Path.GetFileNameWithoutExtension(file);
+            string textFile = Path.Combine(Application.StartupPath, "SilenceDetection", fileWithoutExtension);
+
+            if (File.Exists(textFile + ".txt"))
+            {
+                CleanTextFile(textFile);
+                loadTimestamps(Path.Combine(Application.StartupPath, "SilenceDetection"), fileWithoutExtension + "-timestamp.txt");
+            } else
+            {
+
+            }
+
+        }
+
+        /// <summary>
+        /// Reads our settings.txt file to get the user's chosen settings.
+        /// </summary>
         private void readSettingsFile()
         {
             // Read each line from the txt file into an array.
@@ -140,12 +275,25 @@ namespace BachFlixAudioAnalyzer
                     case "vlcLocation":
                         mySettings.vlcLocation = entries[1];
                         break;
+                    case "outputLocation":
+                        mySettings.outputLocation = entries[1];
+                        break;
+                    case "deleteOriginal":
+                        mySettings.deleteOriginal = entries[1];
+                        break;
+                    case "removeSplashScreens":
+                        mySettings.removeSplashScreens = entries[1];
+                        break;
                     default:
                         break;
                 }
             }
         }
         
+        /// <summary>
+        /// Updates the text to the status label.
+        /// </summary>
+        /// <param name="text">The text to be written to the status label.</param>
         private void UpdateStatusLabel(string text)
         {
             lblCurrentRunningProcess.Visible = true;
@@ -153,46 +301,10 @@ namespace BachFlixAudioAnalyzer
             this.Refresh();
         }
 
-        private void DetectSilence(string file)
-        {
-            var fileName = Path.GetFileName(file);
-            var fileWithoutExtension = Path.GetFileNameWithoutExtension(file);
-            var command = "ffmpeg -y -nostats -i \"" + file + "\" -af silencedetect=n=" + mySettings.silenceDetection + ":d=" + mySettings.silenceDuration + " -f null - 2> SilenceDetection\\\"" + fileWithoutExtension + "\".txt";
-            try
-            {
-                // create the ProcessStartInfo using "cmd" as the program to be run,
-                // and "/c " as the parameters.
-                // Incidentally, /c tells cmd that we want it to execute the command that follows,
-                // and then exit.
-                ProcessStartInfo procStartInfo =
-                    new ProcessStartInfo("cmd", "/c " + command)
-                    {
-                        // The following commands are needed to redirect the standard output.
-                        // This means that it will be redirected to the Process.StandardOutput StreamReader.
-                        RedirectStandardOutput = true,
-                        UseShellExecute = false,
-                        // Do not create the black window.
-                        CreateNoWindow = true
-                    };
-                // Now we create a process, assign its ProcessStartInfo and start it.
-                Process proc = new Process
-                {
-                    StartInfo = procStartInfo
-                };
-                proc.Start();
-                // Get the output into a string
-                string result = proc.StandardOutput.ReadToEnd();
-            }
-            catch (Exception exc)
-            {
-                lblError.Visible = true;
-                lblError.Text = exc.Message;
-                throw;
-            }
-
-        }
-
-        // Takes the txt file that has just ran through silence detection and removes all the jargon to get just the silence_start, silence_end and silence_duration numbers.
+        /// <summary>
+        /// Takes the txt file that has just ran through silence detection and removes all the jargon to get just the silence_start, silence_end and silence_duration numbers.
+        /// </summary>
+        /// <param name="file">The name of the file without it's extension that was just analyzed.</param>
         private void CleanTextFile(string file)
         {
             try
@@ -218,16 +330,9 @@ namespace BachFlixAudioAnalyzer
                     if (line.IndexOf(fileDurationText) > -1)
                     {
                         fileDuration = line.Substring(line.IndexOf(fileDurationText) + fileDurationText.Length, line.IndexOf(",") - (line.IndexOf(fileDurationText) + fileDurationText.Length));
-                        bool keepLooping = true;
+                        string[] split = fileDuration.Split('.');
+                        fileDuration = split[0];
 
-                        do
-                        {
-                            if (fileDuration[0] == '0' && fileDuration[1] == '0')
-                            {
-                                fileDuration = fileDuration.Substring(3);
-                            }
-                            else keepLooping = false;
-                        } while (keepLooping);
                     }
                     if (line.IndexOf(silenceStartText) > -1)
                     {
@@ -248,7 +353,9 @@ namespace BachFlixAudioAnalyzer
                 }
 
                 if (arrlist.Count > 0)
-                 File.WriteAllLines(Path.Combine(wd, o), arrlist);
+                {
+                    File.WriteAllLines(Path.Combine(wd, o), arrlist);
+                }
                 else
                 {
                     arrlist.Add("1,0,0,0," + fileDuration);
@@ -260,25 +367,6 @@ namespace BachFlixAudioAnalyzer
                 lblError.Visible = true;
                 lblError.Text = exc.Message;
                 throw;
-            }
-        }
-
-        private void lbAnalyzed_Click(object sender, EventArgs e)
-        {
-            if (lbAnalyzed.SelectedItem != null && lbAnalyzed.SelectedItem.ToString() != "")
-            {
-                gbDetectedSilence.Visible = true;
-                string selectedFile = lbAnalyzed.SelectedItem.ToString().Substring(0, lbAnalyzed.SelectedItem.ToString().Length - 4);
-                string wd = Path.Combine(Application.StartupPath, "SilenceDetection");
-                string fn = selectedFile + "-timestamp.txt";
-                lblSelectedTimestamp.Text = lbAnalyzed.SelectedItem.ToString();
-                lblSelectedTimestamp.Visible = true;
-                lblFileDuration.Visible = true;
-                lblSaveTimestampsStatus.Visible = false;
-
-                loadTimestamps(wd, fn);
-
-                UpdateFilesAnalyzedCount();
             }
         }
 
@@ -299,7 +387,7 @@ namespace BachFlixAudioAnalyzer
                     string[] entries = line.Split(',');
                     lblFileDuration.Text = entries[4];
 
-                    if (entries[1] != "0" && entries[2] != "0" && entries[3] != "0")
+                    if (entries[3] != "0")
                     {
                         Timestamp newTimestamp = new Timestamp();
 
@@ -334,19 +422,19 @@ namespace BachFlixAudioAnalyzer
             }
         }
 
-        // Convert the seconds time to hh:MM:ss.xxx format.
+        // Convert the seconds time to hh:MM:ss format.
         private string ConvertSecondsToTime(double sec)
         {
             try
             {
                 TimeSpan t = TimeSpan.FromSeconds(sec);
-                string answer = "";
+                string answer = "0";
                 if (t.Hours > 0) answer += t.Hours + ":";
                 if (t.Minutes > 0) answer += t.Minutes + ":"; else if (t.Hours > 0) answer += "00:";
-                if (t.Seconds > 0) answer += t.Seconds + "."; else if (t.Hours > 0 || t.Minutes > 0) answer += "00.";
-                if (t.Milliseconds > 0) answer += t.Milliseconds; else if (t.Hours > 0 || t.Minutes > 0 || t.Seconds > 0) answer += "00";
+                if (t.Seconds > 0) answer += t.Seconds; else if (t.Hours > 0 || t.Minutes > 0) answer += "00";
+                //if (t.Milliseconds > 0) answer += t.Milliseconds; else if (t.Hours > 0 || t.Minutes > 0 || t.Seconds > 0) answer += "00";
 
-                return answer;
+                return t.ToString("hh\\:mm\\:ss\\.ff");
             }
             catch (Exception)
             {
@@ -376,17 +464,6 @@ namespace BachFlixAudioAnalyzer
                 }
 
                 return seconds.ToString();
-
-                // splitting 1:31:47.234 ==
-                // split[0] = 1
-                // split[1] = 31
-                // split[2] = 47.234
-                // which should give us - (1 * 3600) + (31 * 60) + 47.234 = 5,507.234
-
-                // splitting 31:47.234 ==
-                // split[0] = 31
-                // split[1] = 47.234
-                // which should give us - (31 * 60) + 47.234 = 1,907.234
             }
             catch (Exception)
             {
@@ -408,6 +485,10 @@ namespace BachFlixAudioAnalyzer
 
         private void lbTimestamps_DoubleClick(object sender, EventArgs e)
         {
+            lblSaveTimestampsStatus.Text = "Opening VLC, standby.";
+            lblSaveTimestampsStatus.Visible = true;
+            this.Refresh();
+
             string timeStamps = lbTimestamps.SelectedItem.ToString().Substring(lbTimestamps.SelectedItem.ToString().IndexOf(")")+1, lbTimestamps.SelectedItem.ToString().IndexOf("=")-2).Trim();
             string[] entries = timeStamps.Split('-');
             string silenceStart = ConvertTimeToSeconds(entries[0].Trim());
@@ -424,13 +505,16 @@ namespace BachFlixAudioAnalyzer
 
             if (vlcPath != "")
             {
-                var playVideo = "start " + vlcPath + "\\vlc.exe\" vlc \"" + fn + "\" --start-time " + silenceStart + " --stop-time " + silenceEnd;
+                var playVideo = "start \"" + vlcPath + "\\vlc.exe\" vlc \"" + fn + "\" --start-time " + silenceStart + " --stop-time " + silenceEnd + " vlc://quit";
                 RunCommand(playVideo);
             } else
             {
                 lblError.Text = "Path to Video Lan was not found. Please go to Settings and fill in the path to the folder that holds the vlc.exe file.";
                 lblError.Visible = true;
             }
+
+            lblSaveTimestampsStatus.Visible = false;
+            this.Refresh();
         }
 
         private void btnClearWaitingFiles_Click(object sender, EventArgs e)
@@ -439,50 +523,27 @@ namespace BachFlixAudioAnalyzer
             UpdateFilesToAnalyzeCount();
         }
 
-        private void btnRemoveSelectedProcessedFiles_Click(object sender, EventArgs e)
-        {
-            if (lbAnalyzed.SelectedIndices.Count > 0)
-            {
-                for (int i = 0; i < lbAnalyzed.SelectedIndices.Count; i = 0)
-                {
-                    lbAnalyzed.Items.RemoveAt(lbAnalyzed.SelectedIndices[i]);
-                }
-                gbDetectedSilence.Visible = false;
-                UpdateFilesAnalyzedCount();
-            }
-        }
-
-        private void btnClearProcessed_Click(object sender, EventArgs e)
-        {
-            lbAnalyzed.Items.Clear();
-            lbTimestamps.Items.Clear();
-            gbCreateTimestamp.Visible = false;
-            gbDetectedSilence.Visible = false;
-            btnCreateTimestamp.Enabled = true;
-            UpdateFilesAnalyzedCount();
-        }
-
         private void UpdateFilesAnalyzedCount()
         {
-            if (lbAnalyzed.Items.Count > 0)
+            if (lvFilesToAnalyze.Items.Count > 0)
             {
-                btnRemoveSelectedProcessedFiles.Enabled = true;
-                btnClearProcessed.Enabled = true;
-                btnRemoveSelectedTimestamp.Enabled = true;
-                btnSaveTimestamps.Enabled = true;
+                btnRemoveSelectedWaitingFiles.Enabled =
+                btnClearWaitingFiles.Enabled =
+                btnAnalyze.Enabled =
+                btnReAnalyzeFiles.Enabled =
                 btnProcessFiles.Enabled = true;
             } else
             {
-                btnRemoveSelectedProcessedFiles.Enabled = false;
-                btnClearProcessed.Enabled = false;
-                btnRemoveSelectedTimestamp.Enabled = false;
-                btnSaveTimestamps.Enabled = false;
-                lblSelectedTimestamp.Visible = false;
-                lblFileDuration.Visible = false;
-                lblSaveTimestampsStatus.Visible = false;
-                btnProcessFiles.Enabled = false;
-                lbTimestamps.Items.Clear();
+                btnRemoveSelectedWaitingFiles.Enabled =
+                btnClearWaitingFiles.Enabled =
+                btnAnalyze.Enabled =
+                btnReAnalyzeFiles.Enabled =
+                btnProcessFiles.Enabled =
+                gbDetectedSilence.Visible = false;
             }
+
+            //if (currentlyAnalyzing) btnProcessFiles.Enabled = false;
+            //else btnProcessFiles.Enabled = true;
         }
 
         private void btnRemoveSelectedTimestamp_Click(object sender, EventArgs e)
@@ -498,13 +559,15 @@ namespace BachFlixAudioAnalyzer
 
         private void btnSaveTimestamps_Click(object sender, EventArgs e)
         {
-                string wd = Path.Combine(Application.StartupPath, "SilenceDetection");
-                string file = lblSelectedTimestamp.Text;
-                string o = file + "-timestamp.txt";
+            string wd = Path.Combine(Application.StartupPath, "SilenceDetection");
+            string file = lblSelectedTimestamp.Text;
+            string o = Path.GetFileNameWithoutExtension(file) + "-timestamp.txt";
 
-                saveListToTimestampFile(wd, o);
+            saveListToTimestampFile(wd, o);
 
-                loadTimestamps(wd, o);
+            loadTimestamps(wd, o);
+
+            setListViewItemColor(file);
         }
 
         private void saveListToTimestampFile(string wd, string o)
@@ -549,7 +612,7 @@ namespace BachFlixAudioAnalyzer
                 }
 
                 lblSaveTimestampsStatus.Visible = true;
-                lblSaveTimestampsStatus.Text = "New timestamp list saved";
+                lblSaveTimestampsStatus.Text = "New timestamp list saved.";
             }
             catch (Exception exc)
             {
@@ -559,56 +622,254 @@ namespace BachFlixAudioAnalyzer
             }
         }
 
-        private void btnProcessFiles_Click(object sender, EventArgs e)
+        private async void btnProcessFiles_Click(object sender, EventArgs e)
         {
-            // First, hide and clear out the necessary labels and list boxes.
+            readSettingsFile();
+            UpdateStatusLabel("Removing silence");
+
+            // Clear the TimeStamps listbox.
             lbTimestamps.Items.Clear();
-            lblSelectedTimestamp.Visible = false;
-            lblFileDuration.Visible = false;
+
+            // Hide the labels in the Silence Timestamps group box.
+            lblSelectedTimestamp.Visible =
+            lblFileDuration.Visible =
             lblSaveTimestampsStatus.Visible = false;
-            btnRemoveSelectedTimestamp.Enabled = false;
+
+            // Disable the buttons in the Silence Timestamps group box.
+            btnRemoveSelectedTimestamp.Enabled =
             btnSaveTimestamps.Enabled = false;
-            lblError.Visible = false;
+
+            // Hide the Silence Timestamps group box.
             gbDetectedSilence.Visible = false;
+
+            // Hide the error message.
+            lblError.Visible = false;
+
+            // Disable the buttons in the Files group box.
+            btnOpen.Enabled =
+            btnSettings.Enabled =
+            btnRemoveSelectedWaitingFiles.Enabled =
+            btnClearWaitingFiles.Enabled =
+            btnAnalyze.Enabled =
+            btnReAnalyzeFiles.Enabled =
+            btnProcessFiles.Enabled = false;
+
+            // Show the stop button.
+            btnStopAnalyze.Visible = true;
+
+            currentlyProcessing = true;
+
+
+            // First, step through each item and ensure the colors are black.
+            for (var i = 0; i < lvFilesToAnalyze.Items.Count; i++)
+            {
+                lvFilesToAnalyze.Items[i].ForeColor = Color.Gray;
+            }
 
             // Create the directory that will hold the cut video files while processing.
             Directory.CreateDirectory(Application.StartupPath + "\\FilesProcessing");
-            string wd = Path.Combine(Application.StartupPath, "SilenceDetection");
-        
+            string sd = Path.Combine(Application.StartupPath, "SilenceDetection");
+            string saveDirectory = (mySettings.outputLocation == "") ? Path.GetPathRoot(txtPath.Text) + "PlayonPal Processes" : mySettings.outputLocation;
+            Directory.CreateDirectory(sd);
+
             try
             {
-                for (var i = 0; i < lbAnalyzed.Items.Count; i++)
+                for (var i = 0; i < lvFilesToAnalyze.Items.Count; i++)
                 {
-                    string selectedFile = lbAnalyzed.Items[i].ToString().Substring(0, lbAnalyzed.Items[i].ToString().Length - 4);
-                    string fileName = selectedFile + "-timestamp.txt";
-
-                    // Read each line from the txt file into an array.
-                    List<string> lines = File.ReadAllLines(Path.Combine(wd, fileName)).ToList();
-
-                    if (lines.Count == 1)
+                    if (keepProcessing)
                     {
-                        // Split the lines on the commas.
-                        string[] entries = lines[0].Split(',');
+                        lvFilesToAnalyze.Items[i].ForeColor = Color.Blue;
 
-                        RemoveSilence(Path.Combine(txtPath.Text, selectedFile), entries[1]);
+                        string selectedFile = lvFilesToAnalyze.Items[i].Text.Substring(0, lvFilesToAnalyze.Items[i].Text.Length - 4),
+                                fileName = selectedFile + "-timestamp.txt",
+                                file = Path.Combine(txtPath.Text, selectedFile),
+                                wd = Path.Combine(Application.StartupPath, "FilesProcessing");
 
+                        if (File.Exists(Path.Combine(sd, fileName)))
+                        {
+                            // Read each line from the txt file into an array.
+                            List<string> lines = File.ReadAllLines(Path.Combine(sd, fileName)).ToList();
+
+                            // Create the array that holds the names of the video file parts so we can concatenate the files together later.
+                            List<string> arrlist = new List<string>();
+
+                            UpdateStatusLabel("Removing silence from: '" + selectedFile + "'");
+
+                            if (lines.Count == 1)
+                            {
+                                ////////////////////////////////
+                                ///          NOTE:
+                                ///          This if is going to need some refactoring.
+                                ///          Either we remove this single timestamp functionality entirely,
+                                ///          or we just assume the file has splash screens and we need to preserve them.
+                                ///          
+
+
+                                // Split the lines on the commas.
+                                string[] entries = lines[0].Split(',');
+
+                                // Run the command to get the opening splash screen.
+                                if (mySettings.removeSplashScreens.ToUpper() == "FALSE")
+                                {
+                                    await Task.Run(() =>
+                                    {
+                                        RunCommand("ffmpeg -y -i \"" + file + ".mp4\" -t 4 -c copy \"FilesProcessing\\splash.mp4\"");
+                                    });
+                                }
+
+                                if (entries[1] == "00:00:00.00")
+                                {
+                                    // Run the command to remove the silence from the beginning of the file.
+                                    await Task.Run(() =>
+                                    {
+                                        RunCommand("ffmpeg -y -ss " + entries[2] + " -i \"" + file + ".mp4\" -c copy \"FilesProcessing\\main.mp4\"");
+                                    });
+
+                                    // Push the files to the array list in this specific order.
+                                    if (mySettings.removeSplashScreens.ToUpper() == "FALSE") arrlist.Add("file '" + wd + "\\splash.mp4'");
+                                    arrlist.Add("file '" + wd + "\\main.mp4'");
+
+                                    // Now write the array lines to the text file.
+                                    File.WriteAllLines(Path.Combine(wd, "files.txt"), arrlist);
+
+                                    // Finally, concat the files together to one.
+                                    await Task.Run(() =>
+                                    {
+                                        RunCommand("ffmpeg -y -f concat -safe 0 -i \"FilesProcessing\\files.txt\" -c copy \"" + saveDirectory + "\\" + selectedFile + ".mp4\"");
+                                    });
+                                }
+                                else
+                                {
+                                    // Run the command to remove the silence from the end of the file.
+                                    await Task.Run(() =>
+                                    {
+                                        RunCommand("ffmpeg -y -i \"" + file + ".mp4\" -t " + entries[1] + " -c copy \"FilesProcessing\\main.mp4\"");
+                                    });
+
+                                    // Push the files to the array list in this specific order.
+                                    arrlist.Add("file '" + wd + "\\main.mp4'");
+                                    if (mySettings.removeSplashScreens.ToUpper() == "FALSE") arrlist.Add("file '" + wd + "\\splash.mp4'");
+
+                                    // Now write the array lines to the text file.
+                                    File.WriteAllLines(Path.Combine(wd, "files.txt"), arrlist);
+
+                                    // Finally, concat the files together to one.
+                                    await Task.Run(() =>
+                                    {
+                                        RunCommand("ffmpeg -y -f concat -safe 0 -i \"FilesProcessing\\files.txt\" -c copy \"" + saveDirectory + "\\" + selectedFile + ".mp4\"");
+                                    });
+                                }
+                            }
+                            else if (lines.Count == 2)
+                            {
+                                int taskCount = 1,
+                                    tasks = 4;
+                                if (mySettings.removeSplashScreens.ToUpper() == "TRUE")
+                                {
+                                    tasks = 2;
+                                }
+                                if (mySettings.deleteOriginal.ToUpper() == "TRUE")
+                                {
+                                    tasks++;
+                                }
+                                // Split the lines on the commas for both timestamps.
+                                string[] split1 = lines[0].Split(',');
+                                string[] split2 = lines[1].Split(',');
+
+                                // The beginningStamp is going to the silence_end time from the first line in the txt file.
+                                TimeSpan beginningStamp = TimeSpan.Parse(split1[2]);
+                                // The endingStamp is the silence_start of the second line in the txt file, but we need to subtract the beginning stamp from it so we take that removed time into account when getting the main video part.
+                                TimeSpan endingStamp = TimeSpan.Parse(split2[1]) - beginningStamp;
+
+
+                                if (mySettings.removeSplashScreens.ToUpper() == "FALSE")
+                                    arrlist.Add("file '" + wd + "\\splash.mp4'");
+
+                                arrlist.Add("file '" + wd + "\\main.mp4'");
+
+                                if (mySettings.removeSplashScreens.ToUpper() == "FALSE")
+                                    arrlist.Add("file '" + wd + "\\splash.mp4'");
+
+                                File.WriteAllLines(Path.Combine(wd, "files.txt"), arrlist);
+
+                                // Run the command to get the opening splash screen.
+                                if (mySettings.removeSplashScreens.ToUpper() == "FALSE")
+                                {
+                                    UpdateStatusLabel(taskCount++ + " of " + tasks + " - Slicing the splash screen from the file.");
+                                    await Task.Run(() =>
+                                    {
+                                        RunCommand("ffmpeg -y -i \"" + file + ".mp4\" -t 4 -c copy \"FilesProcessing\\splash.mp4\"");
+                                    });
+                                }
+
+                                UpdateStatusLabel(taskCount++ + " of " + tasks + " - Slicing the main content from the file.");
+                                // Run the command to remove the silence from the beginning and end of the file.
+                                await Task.Run(() =>
+                                {
+                                    RunCommand("ffmpeg -y -ss " + beginningStamp + " -i \"" + file + ".mp4\" -t " + endingStamp + " -c copy \"FilesProcessing\\main.mp4\"");
+                                });
+
+                                // Now, concat the files together to one (If they requested to keep the splash screens).
+                                if (mySettings.removeSplashScreens.ToUpper() == "FALSE")
+                                {
+                                    UpdateStatusLabel(taskCount++ + " of " + tasks + " - Concatenating the splash screens back onto the main file.");
+                                    await Task.Run(() =>
+                                    {
+                                        RunCommand("ffmpeg -y -f concat -safe 0 -i \"FilesProcessing\\files.txt\" -c copy \"FilesProcessing\\" + selectedFile + ".mp4\"");
+                                    });
+                                }
+
+                                UpdateStatusLabel(taskCount++ + " of " + tasks + " - Moving the file to chosen directory.");
+                                // Finally, move the finished file to the chosen directory.
+                                if (File.Exists("FilesProcessing\\" + selectedFile + ".mp4"))
+                                {
+                                    await Task.Run(() =>
+                                    {
+                                        File.Move("FilesProcessing\\" + selectedFile + ".mp4", saveDirectory + "\\" + selectedFile + ".mp4");
+                                    });
+
+                                    File.Delete("FilesProcessing\\main.mp4");
+                                    File.Delete("FilesProcessing\\splash.mp4");
+                                }
+                                else
+                                {
+                                    await Task.Run(() =>
+                                    {
+                                        File.Move("FilesProcessing\\main.mp4", saveDirectory + "\\" + selectedFile + ".mp4");
+                                    });
+                                }
+
+                            }
+                            else if (lines.Count > 2)
+                            {
+                                lblError.Text = fileName + " has too many lines to read. We are not yet prepared to handle more than 2 timestamps.";
+                                lblError.Visible = true;
+                                break;
+                            }
+                            else
+                            {
+                                lblError.Text = fileName + " has no lines to read.";
+                                lblError.Visible = true;
+                                break;
+                            }
+
+                            if (mySettings.deleteOriginal.ToUpper() == "TRUE")
+                            {
+                                UpdateStatusLabel("Deleting original file.");
+                                File.Delete(file + ".mp4");
+                            }
+                            lvFilesToAnalyze.Items[i].ForeColor = Color.Green;
+
+                            lvFilesToAnalyze.Items[i].Remove();
+                            i--;
+                            UpdateStatusLabel("Done.");
+                        } else
+                        {
+                            lvFilesToAnalyze.Items[i].ForeColor = Color.Yellow;
+                        }
                     }
-                    else if (lines.Count > 1)
-                    {
-                        lblError.Text = fileName + " has too many lines to read. You probably didn't save the timestamps after removing them.";
-                        lblError.Visible = true;
-                        break;
-                    }
-                    else
-                    {
-                        lblError.Text = fileName + " has no lines to read.";
-                        lblError.Visible = true;
-                        break;
-                    }
-
-
-                    //lbAnalyzed.Items.RemoveAt(0);
                 }
+                UpdateStatusLabel("Done.");
             }
             catch (Exception ex)
             {
@@ -616,31 +877,18 @@ namespace BachFlixAudioAnalyzer
                 lblError.Visible = true;
                 throw;
             }
-        }
 
-        private void RemoveSilence(string file, string time)
-        {
-            // Create the text file that holds the names of the video file parts so we can concatenate the files together later.
-            List<string> arrlist = new List<string>();
-            var fileWithoutExtension = Path.GetFileNameWithoutExtension(file);
-            string wd = Path.Combine(Application.StartupPath, "FilesProcessing");
-            arrlist.Add("file '" + wd + "\\part2.mp4'");
-            arrlist.Add("file '" + wd + "\\part1.mp4'");
-            File.WriteAllLines(Path.Combine(wd, "files.txt"), arrlist);
-            string sd = Path.GetPathRoot(txtPath.Text) + "PlayonPal Processes";
-            Directory.CreateDirectory(sd);
+            btnOpen.Enabled =
+            btnSettings.Enabled =
+            btnStopAnalyze.Enabled =
+            keepProcessing = true;
 
-            // Create the command to get the opening splash screen.
-            var getPart1 = "ffmpeg -y -i \"" + file + ".mp4\" -t 4 -c copy \"FilesProcessing\\part1.mp4\"";
-            RunCommand(getPart1);
+            currentlyProcessing =
+            btnStopAnalyze.Visible =
+            lblStopProcessing.Visible = false;
 
-            // Create the command to remove the trailing silence.
-            var getPart2 = "ffmpeg -y -i \"" + file + ".mp4\" -t " + time + " -c copy \"FilesProcessing\\part2.mp4\"";
-            RunCommand(getPart2);
-
-            // Finally, concat the files together to one.
-            var concatFilesCommand = "ffmpeg -y -f concat -safe 0 -i \"FilesProcessing\\files.txt\" -c copy \"" + sd + "\\" + fileWithoutExtension + ".mp4\"";
-            RunCommand(concatFilesCommand);
+            UpdateFilesToAnalyzeCount();
+            UpdateFilesAnalyzedCount();
         }
 
         private void RunCommand(string command)
@@ -691,7 +939,8 @@ namespace BachFlixAudioAnalyzer
                 {
                     List<string> arrlist = new List<string>();
                     string wd = Path.Combine(Application.StartupPath, "SilenceDetection");
-                    string o = lblSelectedTimestamp.Text + "-timestamp.txt";
+                    string file = lblSelectedTimestamp.Text;
+                    string o = Path.GetFileNameWithoutExtension(file) + "-timestamp.txt";
                     List<string> lines = File.ReadAllLines(Path.Combine(wd, o)).ToList();
                     int newId = lines.Count + 1;
                     string[] entries = lines[0].Split(',');
@@ -723,6 +972,51 @@ namespace BachFlixAudioAnalyzer
             lblErrorCustomTimestamp.Visible = false;
             btnCreateTimestamp.Enabled = true;
             gbCreateTimestamp.Visible = false;
+        }
+
+        private void btnStopAnalyze_Click(object sender, EventArgs e)
+        {
+            lblStopProcessing.Visible = true;
+            btnStopAnalyze.Enabled =
+            keepAnalyzing =
+            keepProcessing = false;
+        }
+
+        private void lvFilesToAnalyze_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lvFilesToAnalyze.SelectedIndices.Count > 0 && lvFilesToAnalyze.SelectedItems[0].Text != "")
+            {
+                string selectedFile = lvFilesToAnalyze.SelectedItems[0].Text.Substring(0, lvFilesToAnalyze.SelectedItems[0].Text.Length - 4);
+                string wd = Path.Combine(Application.StartupPath, "SilenceDetection");
+                string fn = selectedFile + "-timestamp.txt";
+
+                gbDetectedSilence.Visible = true;
+                lblSelectedTimestamp.Text = selectedFile + ".mp4";
+                lblSelectedTimestamp.Visible = true;
+                lblFileDuration.Visible = true;
+                lblSaveTimestampsStatus.Visible = false;
+
+                if (File.Exists(Path.Combine(wd, fn)))
+                {
+                    if (!currentlyAnalyzing || !currentlyProcessing)
+                    {
+                        btnRemoveSelectedTimestamp.Enabled =
+                        btnSaveTimestamps.Enabled = true;
+                    }
+                    loadTimestamps(wd, fn);
+                } else
+                {
+                    btnRemoveSelectedTimestamp.Enabled = false;
+                    btnSaveTimestamps.Enabled = false;
+                    lbTimestamps.Items.Clear();
+                    lblFileDuration.Text = "N/A";
+                    lbTimestamps.Items.Add("Looks like this file hasn't been analyzed.");
+                    lbTimestamps.Items.Add("Please click 'Analyze' in order to check the file for silence.");
+                }
+            } else
+            {
+                gbDetectedSilence.Visible = false;
+            }
         }
     }
 }

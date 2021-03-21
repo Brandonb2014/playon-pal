@@ -34,6 +34,21 @@ namespace BachFlixAudioAnalyzer
                     case "vlcLocation":
                         txtVlcLocation.Text = entries[1];
                         break;
+                    case "outputLocation":
+                        txtOutputFolder.Text = entries[1];
+                        break;
+                    case "deleteOriginal":
+                        if (entries[1].ToUpper() == "TRUE")
+                            chkbxDeleteOriginal.Checked = true;
+                        else
+                            chkbxDeleteOriginal.Checked = false;
+                        break;
+                    case "removeSplashScreens":
+                        if (entries[1].ToUpper() == "TRUE")
+                            chkbxRemoveSplashScreens.Checked = true;
+                        else
+                            chkbxRemoveSplashScreens.Checked = false;
+                        break;
                     default:
                         break;
                 }
@@ -48,6 +63,10 @@ namespace BachFlixAudioAnalyzer
                 List<string> arrlist = new List<string>();
                 arrlist.Add("silenceDetection," + txtSilenceDetectNoiseLevel.Text);
                 arrlist.Add("silenceDuration," + txtSilenceDuration.Text);
+                arrlist.Add("vlcLocation," + txtVlcLocation.Text);
+                arrlist.Add("outputLocation," + txtOutputFolder.Text);
+                arrlist.Add("deleteOriginal," + chkbxDeleteOriginal.Checked);
+                arrlist.Add("removeSplashScreens," + chkbxRemoveSplashScreens.Checked);
 
                 // Write the arrayList to the settings.txt file.
                 // Each line is a different setting.

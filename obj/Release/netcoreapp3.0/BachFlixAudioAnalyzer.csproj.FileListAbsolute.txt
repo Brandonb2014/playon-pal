@@ -1,0 +1,9 @@
+C:\Users\Brandon\Documents\BachFlixAudioAnalyzer\obj\Release\netcoreapp3.0\BachFlixAudioAnalyzer.csprojAssemblyReference.cache
+C:\Users\Brandon\Documents\BachFlixAudioAnalyzer\obj\Release\netcoreapp3.0\BachFlixAudioAnalyzer.Form1.resources
+C:\Users\Brandon\Documents\BachFlixAudioAnalyzer\obj\Release\netcoreapp3.0\BachFlixAudioAnalyzer.frmSettings.resources
+C:\Users\Brandon\Documents\BachFlixAudioAnalyzer\obj\Release\netcoreapp3.0\BachFlixAudioAnalyzer.Properties.Resources.resources
+C:\Users\Brandon\Documents\BachFlixAudioAnalyzer\obj\Release\netcoreapp3.0\BachFlixAudioAnalyzer.VideoPlayer.resources
+C:\Users\Brandon\Documents\BachFlixAudioAnalyzer\obj\Release\netcoreapp3.0\BachFlixAudioAnalyzer.csproj.GenerateResource.cache
+C:\Users\Brandon\Documents\BachFlixAudioAnalyzer\obj\Release\netcoreapp3.0\BachFlixAudioAnalyzer.AssemblyInfoInputs.cache
+C:\Users\Brandon\Documents\BachFlixAudioAnalyzer\obj\Release\netcoreapp3.0\BachFlixAudioAnalyzer.AssemblyInfo.cs
+C:\Users\Brandon\Documents\BachFlixAudioAnalyzer\obj\Release\netcoreapp3.0\BachFlixAudioAnalyzer.csproj.CoreCompileInputs.cache
