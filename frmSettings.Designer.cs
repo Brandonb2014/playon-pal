@@ -42,9 +42,9 @@
             this.txtOutputFolder = new System.Windows.Forms.TextBox();
             this.chkbxDeleteOriginal = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.chkbxRemoveSplashScreens = new System.Windows.Forms.CheckBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -62,6 +62,8 @@
             // 
             // txtSilenceDetectNoiseLevel
             // 
+            this.txtSilenceDetectNoiseLevel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(35)))), ((int)(((byte)(38)))));
+            this.txtSilenceDetectNoiseLevel.ForeColor = System.Drawing.Color.White;
             this.txtSilenceDetectNoiseLevel.Location = new System.Drawing.Point(250, 15);
             this.txtSilenceDetectNoiseLevel.Margin = new System.Windows.Forms.Padding(4);
             this.txtSilenceDetectNoiseLevel.Name = "txtSilenceDetectNoiseLevel";
@@ -86,6 +88,7 @@
             // btnSave
             // 
             this.btnSave.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnSave.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.btnSave.Location = new System.Drawing.Point(10, 334);
             this.btnSave.Margin = new System.Windows.Forms.Padding(4);
             this.btnSave.Name = "btnSave";
@@ -108,6 +111,8 @@
             // 
             // txtSilenceDuration
             // 
+            this.txtSilenceDuration.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(35)))), ((int)(((byte)(38)))));
+            this.txtSilenceDuration.ForeColor = System.Drawing.Color.White;
             this.txtSilenceDuration.Location = new System.Drawing.Point(160, 47);
             this.txtSilenceDuration.Margin = new System.Windows.Forms.Padding(4);
             this.txtSilenceDuration.Name = "txtSilenceDuration";
@@ -130,6 +135,8 @@
             // 
             // txtVlcLocation
             // 
+            this.txtVlcLocation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(35)))), ((int)(((byte)(38)))));
+            this.txtVlcLocation.ForeColor = System.Drawing.Color.White;
             this.txtVlcLocation.Location = new System.Drawing.Point(144, 81);
             this.txtVlcLocation.Name = "txtVlcLocation";
             this.txtVlcLocation.Size = new System.Drawing.Size(194, 26);
@@ -151,6 +158,8 @@
             // 
             // txtOutputFolder
             // 
+            this.txtOutputFolder.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(35)))), ((int)(((byte)(38)))));
+            this.txtOutputFolder.ForeColor = System.Drawing.Color.White;
             this.txtOutputFolder.Location = new System.Drawing.Point(144, 122);
             this.txtOutputFolder.Name = "txtOutputFolder";
             this.txtOutputFolder.Size = new System.Drawing.Size(194, 26);
@@ -179,16 +188,6 @@
             this.label6.Text = "Delete original file when done:";
             this.toolTip1.SetToolTip(this.label6, "Delete the original file when done removing silence.");
             // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(198, 55);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(69, 20);
-            this.label3.TabIndex = 7;
-            this.label3.Text = "seconds";
-            // 
             // label7
             // 
             this.label7.AutoSize = true;
@@ -214,10 +213,21 @@
         "e.");
             this.chkbxRemoveSplashScreens.UseVisualStyleBackColor = true;
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(198, 55);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(69, 20);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "seconds";
+            // 
             // frmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(59)))), ((int)(((byte)(67)))), ((int)(((byte)(66)))));
             this.ClientSize = new System.Drawing.Size(356, 377);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.chkbxRemoveSplashScreens);
@@ -235,8 +245,9 @@
             this.Controls.Add(this.txtSilenceDetectNoiseLevel);
             this.Controls.Add(this.label1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.ForeColor = System.Drawing.SystemColors.ControlLight;
             this.Name = "frmSettings";
-            this.Text = "frmSettings";
+            this.Text = "Settings";
             this.TopMost = true;
             this.ResumeLayout(false);
             this.PerformLayout();

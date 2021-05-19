@@ -3,4 +3,4 @@ silenceDuration,1
 vlcLocation,
 outputLocation,E:\Run these through HandBrake
 deleteOriginal,True
-removeSplashScreens,False
+removeSplashScreens,True

@@ -1,19 +1,31 @@
 {
   "version": 2,
-  "dgSpecHash": "kCEtwqcrlWlC1Fi0dkzTrzMTzp0Wh0Rli8Oj2CZgm3pMwDD7XKvlujZ6XkC6zsW3mrJP+n/rrkqL7xg3qTgSVQ==",
+  "dgSpecHash": "rsbTp+eWkaNbgYNJwKb5UZTkgvNvFoemAvYjE6kyVEEvGd07g5xyXBxKEv9EsnWPtWqxoVEsPdeEFAt7BY/+pg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Brandon\\Documents\\BachFlixAudioAnalyzer\\BachFlixAudioAnalyzer.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Brandon\\.nuget\\packages\\ffmpegcore\\4.1.0\\ffmpegcore.4.1.0.nupkg.sha512",
+    "C:\\Users\\Brandon\\.nuget\\packages\\ffmpegcore\\4.2.0\\ffmpegcore.4.2.0.nupkg.sha512",
     "C:\\Users\\Brandon\\.nuget\\packages\\instances\\1.6.0\\instances.1.6.0.nupkg.sha512",
     "C:\\Users\\Brandon\\.nuget\\packages\\microsoft.netcore.platforms\\5.0.0\\microsoft.netcore.platforms.5.0.0.nupkg.sha512",
     "C:\\Users\\Brandon\\.nuget\\packages\\microsoft.win32.systemevents\\5.0.0\\microsoft.win32.systemevents.5.0.0.nupkg.sha512",
     "C:\\Users\\Brandon\\.nuget\\packages\\system.drawing.common\\5.0.2\\system.drawing.common.5.0.2.nupkg.sha512",
     "C:\\Users\\Brandon\\.nuget\\packages\\system.text.json\\5.0.1\\system.text.json.5.0.1.nupkg.sha512",
-    "C:\\Users\\Brandon\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.0.1\\microsoft.aspnetcore.app.ref.3.0.1.nupkg.sha512",
-    "C:\\Users\\Brandon\\.nuget\\packages\\microsoft.netcore.app.ref\\3.0.0\\microsoft.netcore.app.ref.3.0.0.nupkg.sha512",
+    "C:\\Users\\Brandon\\.nuget\\packages\\wmplib\\1.0.0\\wmplib.1.0.0.nupkg.sha512",
     "C:\\Users\\Brandon\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.0.3\\microsoft.netcore.app.host.win-x64.3.0.3.nupkg.sha512",
-    "C:\\Users\\Brandon\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\3.0.0\\microsoft.windowsdesktop.app.ref.3.0.0.nupkg.sha512"
+    "C:\\Users\\Brandon\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.0.1\\microsoft.aspnetcore.app.ref.3.0.1.nupkg.sha512",
+    "C:\\Users\\Brandon\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\3.0.0\\microsoft.windowsdesktop.app.ref.3.0.0.nupkg.sha512",
+    "C:\\Users\\Brandon\\.nuget\\packages\\microsoft.netcore.app.ref\\3.0.0\\microsoft.netcore.app.ref.3.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'WMPLib 1.0.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8' instead of the project target framework '.NETCoreApp,Version=v3.0'. This package may not be fully compatible with your project.",
+      "libraryId": "WMPLib",
+      "targetGraphs": [
+        ".NETCoreApp,Version=v3.0"
+      ]
+    }
+  ]
 }
